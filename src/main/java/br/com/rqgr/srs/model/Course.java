@@ -27,7 +27,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "course", catalog = "school", schema = "public")
+@Table(name = "course")
 @XmlRootElement
 public class Course extends AbstractEntity {
     
