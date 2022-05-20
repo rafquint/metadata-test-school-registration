@@ -1,9 +1,12 @@
 package br.com.rqgr.srs.controller;
 
 import br.com.rqgr.srs.dto.CourseDTO;
+import br.com.rqgr.srs.model.Course;
+import br.com.rqgr.srs.repository.CourseRepository;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
@@ -19,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +51,9 @@ public class CourseControllerIT {
 
     @Autowired
     private TestRestTemplate restTemplate;
+    
+    @Autowired
+    private CourseRepository courseRepository;
 
     public CourseControllerIT() {
     }
@@ -70,6 +77,7 @@ public class CourseControllerIT {
     @Test
     public void testCreate() {
         log.info("create");
+        final long expCount = courseRepository.count() + 1;
         final String courseName = "Translation";
         CourseDTO courseDTO = CourseDTO.builder().name(courseName).build();
         ResponseEntity<CourseDTO> result = restTemplate.postForEntity("/api/courses", courseDTO, CourseDTO.class);
@@ -77,6 +85,7 @@ public class CourseControllerIT {
         assertNotNull(body);
         assertNotNull(body.getId());
         assertEquals(courseName, body.getName());
+        assertEquals(expCount, courseRepository.count());
     }
 
     @Test
@@ -84,8 +93,11 @@ public class CourseControllerIT {
         log.info("retrieve");
         final int page = 0;
         final int size = 5;
-        ResponseEntity<List<CourseDTO>> result = restTemplate.exchange("/api/courses?page=" + page + "&size=" + size, HttpMethod.GET,
-                null, new ParameterizedTypeReference<List<CourseDTO>>() {
+        ResponseEntity<List<CourseDTO>> result = restTemplate.exchange(
+                "/api/courses?page=" + page + "&size=" + size,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<CourseDTO>>() {
         });
         final List<CourseDTO> body = result.getBody();
         assertNotNull(body);
@@ -109,31 +121,35 @@ public class CourseControllerIT {
         assertEquals(expCourseName, body.getName());
     }
 
-    @Ignore
     @Test
     public void testUpdate() {
         log.info("update");
-        String id = "";
-        CourseDTO courseDTO = null;
-        CourseController instance = null;
-        ResponseEntity<CourseDTO> expResult = null;
-        ResponseEntity<CourseDTO> result = instance.update(id, courseDTO);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        final String id = "40340D6E12A7D568836E642C4176C5BC";
+        final Optional<Course> course = courseRepository.findById(id);
+        final String courseOriginalName = course.get().getName();
+        final String newCourseName = courseOriginalName + " I";
+        final CourseDTO courseDTO = CourseDTO.builder().id(id).name(newCourseName).build();
+        final HttpEntity<CourseDTO> requestEntity = new HttpEntity(courseDTO);
+        ResponseEntity<CourseDTO> result = restTemplate.exchange("/api/courses/" + id, HttpMethod.PUT, requestEntity, CourseDTO.class);
+        final CourseDTO body = result.getBody();
+        assertNotNull(body);
+        assertNotNull(body.getId());
+        assertEquals(id, body.getId());
+        assertEquals(newCourseName, body.getName());
+        
+        final Optional<Course> courseUpdated = courseRepository.findById(id);
+        assertNotEquals(courseOriginalName, courseUpdated.get().getName());
     }
 
-    @Ignore
     @Test
     public void testDelete() {
         log.info("delete");
-        String id = "";
-        CourseController instance = null;
-        ResponseEntity<HttpStatus> expResult = null;
-        ResponseEntity<HttpStatus> result = instance.delete(id);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        final String id = "4DD3E9BACF2BB8DD837D7FDF9FED45C7";
+        final long expCount = courseRepository.count() - 1;
+        HttpStatus expResult = HttpStatus.OK;
+        ResponseEntity<HttpStatus> result = restTemplate.exchange("/api/courses/" + id, HttpMethod.DELETE, null, HttpStatus.class);
+        assertEquals(expResult, result.getStatusCode());
+        assertEquals(expCount, courseRepository.count());
     }
 
 }
