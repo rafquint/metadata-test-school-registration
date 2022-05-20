@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
 import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan(basePackages = "br.com.rqgr.config")
+@ComponentScan(basePackages = "br.com.rqgr")
 @SpringBootApplication
 public class Application {
 
