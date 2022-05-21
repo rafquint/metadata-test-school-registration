@@ -27,10 +27,10 @@ public class StudentCourse extends AbstractEntity {
 
     @JoinColumn(name = "course_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Course courseId;
+    private Course course;
 
     @JoinColumn(name = "student_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Student studentId;
+    private Student student;
 
 }

@@ -38,7 +38,7 @@ public class Student extends AbstractEntity {
     private String name;
     
     @Getter(onMethod = @__({@XmlTransient}))
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentId", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
     private List<StudentCourse> studentCourseList;
     
 }
