@@ -50,4 +50,14 @@ public class EnrollmentService {
         return courses.map(CourseDTO::new);
     }
 
+    public Page<StudentDTO> findAllUnregisteredStudents(Pageable pageable) {
+        final Page<Student> students = studentCourseRepository.findAllUnregisteredStudents(pageable);
+        return students.map(StudentDTO::new);
+    }
+
+    public Page<CourseDTO> findAllUnregisteredCourses(Pageable pageable) {
+        final Page<Course> courses = studentCourseRepository.findAllUnregisteredCourses(pageable);
+        return courses.map(CourseDTO::new);
+    }
+
 }

@@ -72,4 +72,26 @@ public class EnrollmentController {
         final Page<CourseDTO> coursesPage = enrollmentService.findAllCoursesByStudent(studentId, paging);
         return ResponseUtil.wrapOrNotFound(coursesPage);
     }
+    
+    @GetMapping("/enrollments/unregistered/students")
+    public ResponseEntity<List<StudentDTO>> retrieveUnregisteredStudents(
+            @Min(0) @RequestParam(defaultValue = "0") int page,
+            @Min(5) @Max(50) @RequestParam(defaultValue = "30") int size
+    ) {
+
+        final Pageable paging = PageRequest.of(page, size);
+        final Page<StudentDTO> studentsPage = enrollmentService.findAllUnregisteredStudents(paging);
+        return ResponseUtil.wrapOrNotFound(studentsPage);
+    }
+    
+    @GetMapping("/enrollments/unregistered/courses")
+    public ResponseEntity<List<CourseDTO>> retrieveUnregisteredCourses(
+            @Min(0) @RequestParam(defaultValue = "0") int page,
+            @Min(5) @Max(50) @RequestParam(defaultValue = "30") int size
+    ) {
+
+        final Pageable paging = PageRequest.of(page, size);
+        final Page<CourseDTO> coursesPage = enrollmentService.findAllUnregisteredCourses(paging);
+        return ResponseUtil.wrapOrNotFound(coursesPage);
+    }
 }

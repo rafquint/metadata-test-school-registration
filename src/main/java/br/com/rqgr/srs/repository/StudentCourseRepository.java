@@ -26,4 +26,14 @@ public interface StudentCourseRepository extends JpaRepository<StudentCourse, St
             + " WHERE s.id = :studentId")
     public Page<Course> findAllCoursesByStudent(String studentId, Pageable pageable);
 
+    @Query(" SELECT s"
+            + " FROM Student s"
+            + " WHERE NOT EXISTS elements(s.studentCourseList)")
+    public Page<Student> findAllUnregisteredStudents(Pageable pageable);
+
+    @Query(" SELECT c"
+            + " FROM Course c"
+            + " WHERE NOT EXISTS elements(c.studentCourseList)")
+    public Page<Course> findAllUnregisteredCourses(Pageable pageable);
+
 }
