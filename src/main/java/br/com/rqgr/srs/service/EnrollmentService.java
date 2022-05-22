@@ -12,8 +12,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -35,7 +37,8 @@ public class EnrollmentService {
 
     public EnrollmentDTO create(EnrollmentDTO enrollmentDTO) {
         final StudentCourse studentCourse = modelMapper.map(enrollmentDTO, StudentCourse.class);
-        //TODO - verify max 50
+        verifyMaxStudents(enrollmentDTO.getCourseId());
+        verifyMaxCourses(enrollmentDTO.getStudentId());
         final StudentCourse savedStudentCourse = studentCourseRepository.save(studentCourse);
         return new EnrollmentDTO(savedStudentCourse);
     }
@@ -58,6 +61,20 @@ public class EnrollmentService {
     public Page<CourseDTO> findAllUnregisteredCourses(Pageable pageable) {
         final Page<Course> courses = studentCourseRepository.findAllUnregisteredCourses(pageable);
         return courses.map(CourseDTO::new);
+    }
+
+    private void verifyMaxStudents(String courseId) {
+        long count = studentCourseRepository.countByCourseId(courseId);
+        if(count + 1 >= 50){
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A course has 50 students maximum.");
+        }
+    }
+
+    private void verifyMaxCourses(String studentId) {
+        long count = studentCourseRepository.countByStudentId(studentId);
+        if(count + 1 >= 5){
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A student can register to 5 course maximum.");
+        }
     }
 
 }

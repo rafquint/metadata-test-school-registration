@@ -36,4 +36,8 @@ public interface StudentCourseRepository extends JpaRepository<StudentCourse, St
             + " WHERE NOT EXISTS elements(c.studentCourseList)")
     public Page<Course> findAllUnregisteredCourses(Pageable pageable);
 
+    public long countByCourseId(String courseId);
+
+    public long countByStudentId(String studentId);
+
 }
