@@ -3,6 +3,6 @@ WORKDIR /app
 RUN mkdir -p /app
 COPY . /app
 RUN mvn clean install
-RUN mvn site:site
+# RUN mvn site:site
 CMD mvn spring-boot:run
 EXPOSE 8080
