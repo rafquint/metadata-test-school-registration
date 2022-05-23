@@ -63,14 +63,14 @@ public class EnrollmentService {
         return courses.map(CourseDTO::new);
     }
 
-    private void verifyMaxStudents(String courseId) {
+    protected void verifyMaxStudents(String courseId) {
         long count = studentCourseRepository.countByCourseId(courseId);
         if(count + 1 >= 50){
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A course has 50 students maximum.");
         }
     }
 
-    private void verifyMaxCourses(String studentId) {
+    protected void verifyMaxCourses(String studentId) {
         long count = studentCourseRepository.countByStudentId(studentId);
         if(count + 1 >= 5){
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "A student can register to 5 course maximum.");
