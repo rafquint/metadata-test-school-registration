@@ -120,6 +120,15 @@ public class CourseControllerIT {
         assertNotNull(body.getId());
         assertEquals(expCourseName, body.getName());
     }
+    
+    @Test
+    public void testRetrieve_String_NotFound() {
+        log.info("retrieve");
+        final String id = "11D8EEBC58E0A7D796690800200C9A66";
+        ResponseEntity<String> result = restTemplate.getForEntity("/api/courses/" + id, String.class);
+        final HttpStatus statusCode = result.getStatusCode();
+        assertEquals(HttpStatus.NOT_FOUND, statusCode);
+    }
 
     @Test
     public void testUpdate() {
