@@ -149,6 +149,24 @@ public class StudentControllerIT {
         final Optional<Student> studentUpdated = studentRepository.findById(id);
         assertNotEquals(studentOriginalName, studentUpdated.get().getName());
     }
+    
+    @Test
+    public void testUpdate_error() {
+        log.info("update");
+        final String id = "487F0DF2554795AC861262BDA03DCD8C";
+        final Optional<Student> student = studentRepository.findById(id);
+        final String studentOriginalName = student.get().getName();
+        final String newStudentName = studentOriginalName + " Down";
+        final StudentDTO studentDTO = StudentDTO.builder().id("error").name(newStudentName).build();
+        final HttpEntity<StudentDTO> requestEntity = new HttpEntity(studentDTO);
+        ResponseEntity<String> result = restTemplate.exchange("/api/students/" + id, HttpMethod.PUT, requestEntity, String.class);
+        final String body = result.getBody();
+        final HttpStatus statusCode = result.getStatusCode();
+        assertTrue(StringUtils.isNotBlank(body));
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, statusCode);
+        final Optional<Student> studentUpdated = studentRepository.findById(id);
+        assertEquals(studentOriginalName, studentUpdated.get().getName());
+    }
 
     @Test
     public void testDelete() {

@@ -149,6 +149,24 @@ public class CourseControllerIT {
         final Optional<Course> courseUpdated = courseRepository.findById(id);
         assertNotEquals(courseOriginalName, courseUpdated.get().getName());
     }
+    
+    @Test
+    public void testUpdate_error() {
+        log.info("update");
+        final String id = "40340D6E12A7D568836E642C4176C5BC";
+        final Optional<Course> course = courseRepository.findById(id);
+        final String courseOriginalName = course.get().getName();
+        final String newCourseName = courseOriginalName + " I";
+        final CourseDTO courseDTO = CourseDTO.builder().id("error").name(newCourseName).build();
+        final HttpEntity<CourseDTO> requestEntity = new HttpEntity(courseDTO);
+        ResponseEntity<String> result = restTemplate.exchange("/api/courses/" + id, HttpMethod.PUT, requestEntity, String.class);
+        final String body = result.getBody();
+        final HttpStatus statusCode = result.getStatusCode();
+        assertTrue(StringUtils.isNotBlank(body));
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, statusCode);
+        final Optional<Course> courseUpdated = courseRepository.findById(id);
+        assertEquals(courseOriginalName, courseUpdated.get().getName());
+    }
 
     @Test
     public void testDelete() {
