@@ -1,9 +1,6 @@
-FROM maven:3.8.5-jdk-11
-VOLUME .m2 /root/.m2
-WORKDIR /app
+FROM openjdk:11
 RUN mkdir -p /app
-COPY src pom.xml /app
-RUN mvn clean install
-ENV ACTIVE=default
-ENTRYPOINT ["mvn", "spring-boot:run", "-Dspring.profiles.active=${ACTIVE}"]
+COPY target/rest-api.jar /app
+WORKDIR /app
+ENTRYPOINT ["java", "-jar", "rest-api.jar"]
 EXPOSE 8080
