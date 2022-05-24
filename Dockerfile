@@ -5,5 +5,5 @@ RUN mkdir -p /app
 COPY src pom.xml /app
 RUN mvn clean install
 ENV ACTIVE=default
-ENTRYPOINT ["java", "-Dspring.profiles.active=${ACTIVE}", "-jar", "target/rest-api.jar"]
+ENTRYPOINT ["mvn", "spring-boot:run", "-Dspring.profiles.active=${ACTIVE}"]
 EXPOSE 8080
