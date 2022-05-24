@@ -21,9 +21,7 @@ School registration system
 
     Browse:
         http://localhost:8080/
-
         or
-
         http://localhost:8080/swagger-ui/
 
 6. Docker (optionl)
