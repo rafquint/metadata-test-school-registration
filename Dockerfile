@@ -3,5 +3,6 @@ WORKDIR /app
 RUN mkdir -p /app
 COPY src pom.xml /app
 RUN mvn clean install
-ENTRYPOINT ["java", "-Dspring.profiles.active=default", "-jar", "target/rest-api.jar"]
+ENV ACTIVE=default
+ENTRYPOINT ["java", "-Dspring.profiles.active=${ACTIVE}", "-jar", "target/rest-api.jar"]
 EXPOSE 8080
