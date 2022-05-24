@@ -165,6 +165,7 @@
     </dependencies>
 
     <build>
+        <finalName>rest-api</finalName>
         <pluginManagement>
             <plugins>
                 <!--plugin>
